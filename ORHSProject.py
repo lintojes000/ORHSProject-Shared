@@ -10,6 +10,7 @@ class imageToolbox:
         self.uMin = uMin #number
         self.uMax = uMax #number
         self.image = self.imageFactory()
+        self.blankmask = None
         print('imbox initialized')
 
     def rowCol(self, specID):
@@ -37,7 +38,7 @@ class imageToolbox:
             return i,j
 
     def imageFactory(self):
-            uMax = self.uMax #x is just a stand in for the word unit
+            uMax = self.uMax 
             uMin= self.uMin 
             wsName = self.wsName
 
@@ -54,5 +55,18 @@ class imageToolbox:
             print('zMin', self.zMin)
             
             return image
-    def plotimage(self, vmax, vmin): 
-          plt.imshow(self.image) #v stands for visualization, not where we are 
+    
+    def plotimage(self, displayMax, displayMin): 
+          plt.imshow(self.image) #v stands for visualization, not where we are     
+    
+    def darkMask(self):
+
+        maskArray = np.empty_like(self.image, dtype=bool)
+        maskArray[:] = False
+
+        dark_mask_vals = self.image < np.max(self.image)
+        maskArray[dark_mask_vals] = True
+
+        self.blankmask = maskArray
+
+        print(dark_mask_vals)
