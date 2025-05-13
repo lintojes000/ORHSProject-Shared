@@ -10,7 +10,9 @@ class imageToolbox:
         self.uMin = uMin #number
         self.uMax = uMax #number
         self.image = self.imageFactory()
-        self.blankmask = None
+        maskArray = np.empty_like(self.image, dtype=bool)
+        maskArray[:] = False #false means not masked
+        self.mask = maskArray
         print('imbox initialized')
 
     def rowCol(self, specID):
@@ -61,12 +63,14 @@ class imageToolbox:
     
     def darkMask(self):
 
-        maskArray = np.empty_like(self.image, dtype=bool)
-        maskArray[:] = False
+        
 
         dark_mask_vals = self.image < np.max(self.image)
-        maskArray[dark_mask_vals] = True
-
-        self.blankmask = maskArray
+        self.mask[dark_mask_vals] = True #true means masked- masks everything other than the single brightest pixel
 
         print(dark_mask_vals)
+
+    #def erasemask(self)
+         
+    #def threshmask(self)
+    
