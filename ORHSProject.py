@@ -62,15 +62,17 @@ class imageToolbox:
           plt.imshow(self.image) #v stands for visualization, not where we are     
     
     def darkMask(self):
-
-        
-
         dark_mask_vals = self.image < np.max(self.image)
         self.mask[dark_mask_vals] = True #true means masked- masks everything other than the single brightest pixel
-
         print(dark_mask_vals)
 
-    #def erasemask(self)
-         
-    #def threshmask(self)
-    
+    def erasemask(self):
+         self.mask[:] = False
+
+    def threshmask(self, thresh, greaterthan=True):
+        if greaterthan: 
+            mask_vals = self.image > thresh*self.image.mean()
+        else:
+             mask_vals = self.image < thresh*self.image.mean()
+
+        self.mask[mask_vals]= True
