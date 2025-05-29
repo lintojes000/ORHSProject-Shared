@@ -66,6 +66,14 @@ class imageToolbox:
         self.mask[dark_mask_vals] = True #true means masked- masks everything other than the single brightest pixel
         print(dark_mask_vals)
 
+    def applymask(self):
+        imagecopy = copy.copy(self.image)
+        imagecopy[self.mask] = 0
+        self.maskedimage = imagecopy
+        #print('number of masked pixels', np.sum(self.mask))
+
+        print(f"There are {np.sum(self.mask)} masked pixels out of 18432 pixels, or {(np.sum(self.mask)/18432)*100}%.") #number of pixels changes with the dataset used
+
     def erasemask(self):
          self.mask[:] = False
 
@@ -73,6 +81,8 @@ class imageToolbox:
         if greaterthan: 
             mask_vals = self.image > thresh*self.image.mean()
         else:
-             mask_vals = self.image < thresh*self.image.mean()
+            mask_vals = self.image < thresh*self.image.mean()
 
         self.mask[mask_vals]= True
+
+        
