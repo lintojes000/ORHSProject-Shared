@@ -13,6 +13,7 @@ class imageToolbox:
         maskArray = np.empty_like(self.image, dtype=bool)
         maskArray[:] = False #false means not masked
         self.mask = maskArray
+        self.applymask()
         print('imbox initialized')
 
     def rowCol(self, specID):
@@ -62,15 +63,20 @@ class imageToolbox:
           plt.imshow(self.image) #v stands for visualization, not where we are     
     
     def darkMask(self):
-        dark_mask_vals = self.image < np.max(self.image)
-        self.mask[dark_mask_vals] = True #true means masked- masks everything other than the single brightest pixel
-        print(dark_mask_vals)
+        mask_vals = self.image < np.max(self.image)
+        self.mask[mask_vals] = True #true means masked- masks everything other than the single brightest pixel
+        print(mask_vals)
+        print(f'The length of the dark_mask_vals is {len(mask_vals)}')
+        print(f'The dimensions of the dark_mask_vals array are {mask_vals.shape} and its type is {mask_vals.dtype}')
+
 
     def applymask(self):
         imagecopy = copy.copy(self.image)
         imagecopy[self.mask] = 0
         self.maskedimage = imagecopy
         #print('number of masked pixels', np.sum(self.mask))
+        print(f'The dimensions of the self.mask array are {self.mask.shape} and its type is {self.mask.dtype}')
+        print(f'The dimensions of the self.image array are {self.image.shape} and its type is {self.image.dtype}')
 
         print(f"There are {np.sum(self.mask)} masked pixels out of 18432 pixels, or {(np.sum(self.mask)/18432)*100}%.") #number of pixels changes with the dataset used
 
@@ -84,5 +90,7 @@ class imageToolbox:
             mask_vals = self.image < thresh*self.image.mean()
 
         self.mask[mask_vals]= True
+
+        print(f'The dimensions of the dark_mask_vals array are {mask_vals.shape} and its type is {mask_vals.dtype}')
 
         
