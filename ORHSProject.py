@@ -15,7 +15,7 @@ class imageToolbox:
         maskArray[:] = False #false means not masked
         self.mask = maskArray
         
-        self.applymask()
+        self.applyMask()
         print('imbox initialized')
 
     def rowCol(self, specID):
@@ -95,6 +95,6 @@ class imageToolbox:
         print(f'The dimensions of the self.image array are {self.image.shape} and its type is {self.image.dtype}')
         print(f"There are {np.sum(self.mask)} masked pixels out of 18432 pixels, or {(np.sum(self.mask)/18432)*100}%.") #number of pixels changes with the dataset used
 
-    def erasemask(self):
+    def eraseMask(self):
         
         self.mask[:] = False
