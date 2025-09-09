@@ -5,11 +5,14 @@ import numpy as np #type:ignore
 import skimage as ski #type:ignore
 
 class imageToolbox:
-    def __init__(self, wsName, uMin, uMax):
-        self.wsName = wsName #string
-        self.uMin = uMin #number
-        self.uMax = uMax #number
-        self.image = self.imageFactory()
+    def __init__(self, wsName=None, uMin=None, uMax=None, image=None):
+        if image is None:
+            self.wsName = wsName #string
+            self.uMin = uMin #number
+            self.uMax = uMax #number
+            self.image = self.imageFactory()
+        elif image is not None:
+            self.image = image
         
         maskArray = np.empty_like(self.image, dtype=bool)
         maskArray[:] = False #false means not masked
