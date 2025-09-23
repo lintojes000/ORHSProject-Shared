@@ -5,12 +5,19 @@ import numpy as np #type:ignore
 import skimage as ski #type:ignore
 
 class imageToolbox:
-    def __init__(self, wsName, uMin, uMax):
-        self.wsName = wsName #string
-        self.uMin = uMin #number
-        self.uMax = uMax #number
-        self.image = self.imageFactory()
-        
+    def __init__(self, wsName=None, uMin=None, uMax=None, image=None):
+        if image is None:
+            self.wsName = wsName #string
+            self.uMin = uMin #number
+            self.uMax = uMax #number
+            self.image = self.imageFactory()
+        elif image is not None:
+            self.image = image
+
+        max=image.max()
+        self.image=(self.image)/max #normalizing image into 0-1 scale/range
+        self.pixelnumber = image.size
+
         maskArray = np.empty_like(self.image, dtype=bool)
         maskArray[:] = False #false means not masked
         self.mask = maskArray
@@ -62,9 +69,9 @@ class imageToolbox:
             
         return image
     
-    def plotImage(self, displayMax, displayMin): 
+    def plotImage(self, displayMax=1, displayMin=0): 
 
-        plt.imshow(self.image) #v stands for visualization, not where we are     
+        plt.imshow(self.image, vmin=displayMin, vmax=displayMax, cmap='gray') #v stands for visualization, not where we are     
     
     def darkMask(self):
 
@@ -77,9 +84,9 @@ class imageToolbox:
     def threshMask(self, thresh, greaterThan=True):
 
         if greaterThan: 
-            mask_vals = self.image > thresh*self.image.mean()
+            mask_vals = self.image > thresh
         else:
-            mask_vals = self.image < thresh*self.image.mean()
+            mask_vals = self.image < thresh
 
         self.mask[mask_vals]= True
 
@@ -93,7 +100,7 @@ class imageToolbox:
 
         print(f'The dimensions of the self.mask array are {self.mask.shape} and its type is {self.mask.dtype}')
         print(f'The dimensions of the self.image array are {self.image.shape} and its type is {self.image.dtype}')
-        print(f"There are {np.sum(self.mask)} masked pixels out of 18432 pixels, or {(np.sum(self.mask)/18432)*100}%.") #number of pixels changes with the dataset used
+        print(f"There are {np.sum(self.mask)} masked pixels out of {self.pixelnumber} pixels, or {(np.sum(self.mask)/18432)*100}%.") #number of pixels changes with the dataset used
 
     def eraseMask(self):
         
