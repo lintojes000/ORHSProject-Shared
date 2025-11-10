@@ -15,7 +15,7 @@ class imageToolbox:
             self.image = image
 
         norm=np.max(self.image)
-        print(f'norm is {np.max(self.image)}')
+        print(f'norm is {norm}')
         self.image=(self.image)/norm #normalizing image into 0-1 scale/range
         self.pixelnumber = self.image.size
 
@@ -106,3 +106,60 @@ class imageToolbox:
     def eraseMask(self):
         
         self.mask[:] = False
+
+    def spectrumIDMap(self):
+
+    #This builds an ndarray that is identical to the image of sliceImage, but populates this with the 
+    # spectrum numbers from the original input workspace. The resultant array provides a convenient way
+    # to recover the spectrum ID of any pair of image (i,j) coordinates.
+
+        ws = mtd[str(self.wsName)]
+        
+        mapImage = np.zeros((96,192),dtype=int)  #empty array to hold data
+
+        nSpectra = ws.getNumberHistograms()
+
+        for spec in range(nSpectra):
+        
+            i,j = self.rowCol(spec) #returns indices
+            
+            mapImage[i,j] = int(spec) #assign y value of pixel to image array
+
+        return mapImage
+    
+    def compressIDs(self,id_list):
+
+    # Takes list (or np array) of integer pixel IDs and converts to mantid style string
+        id_list = sorted(set(id_list.tolist() if isinstance(id_list, np.ndarray) else id_list))
+        
+        if len(id_list) == 0:
+            print("empty list of pixel IDs, can\'t make a string")
+            return ""
+
+        result = []
+        start = prev = id_list[0]
+
+        for num in id_list[1:]:
+            if num == prev + 1:
+                prev = num
+            else:
+                sep = '-'
+                result.append(str(start) if start == prev else f"{start}{sep}{prev}")
+                start = prev = num
+
+        # Append the last range
+        sep = '-'
+        result.append(str(start) if start == prev else f"{start}{sep}{prev}")
+
+        return ",".join(result)
+
+    def getListOfMaskedPixels(self):
+
+    # return a list of pixel IDs that are masked.
+
+        pixelMap = self.spectrumIDMap() # map between image and mantid spectrum numbers
+        maskedPixelList = pixelMap[self.mask] # a list of spectrum IDs as integers
+        return self.compressIDs(maskedPixelList) #mantid needs list as a string
+
+
+
