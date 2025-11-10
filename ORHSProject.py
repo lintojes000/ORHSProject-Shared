@@ -14,8 +14,9 @@ class imageToolbox:
         elif image is not None:
             self.image = image
 
-        max=self.image.max()
-        self.image=(self.image)/max #normalizing image into 0-1 scale/range
+        norm=np.max(self.image)
+        print(f'norm is {norm}')
+        self.image=(self.image)/norm #normalizing image into 0-1 scale/range
         self.pixelnumber = self.image.size
 
         maskArray = np.empty_like(self.image, dtype=bool)
