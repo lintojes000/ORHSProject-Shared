@@ -74,6 +74,20 @@ class imageToolbox:
 
         plt.imshow(self.image, vmin=displayMin, vmax=displayMax, cmap='gray') #v stands for visualization, not where we are     
     
+    def gridMask(self, gridWidth=1):
+    
+    #This is a function to mask (by setting to zero) all pixels that lie on the module edge
+    #these edges are clearly visible in the images as a glowing grid.
+    #process rows
+        for row in range(96):
+            if np.logical_or((row%32)<=gridWidth,(row%32)>=32-gridWidth):
+                self.mask[row,:]= True
+    
+    #columns
+        for col in range(192):
+            if np.logical_or((col%32)<=gridWidth,(col%32)>=32-gridWidth):
+                self.mask[:,col]= True
+
     def darkMask(self):
 
         mask_vals = self.image < np.max(self.image)
